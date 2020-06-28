@@ -6,7 +6,7 @@
 #define nonblocking(s)  fcntl(s, F_SETFL, fcntl(s, F_GETFL) | O_NONBLOCK)
 #define CONN_WOULDBLOCK (errno == EWOULDBLOCK || errno == EINTR || errno == EAGAIN)
 #define CONN_INPROGRESS (errno == EINPROGRESS)
-#define CONN_ConnRefused (errno == ECONNREFUSED)
+#define CONN_REFUSED (errno == ECONNREFUSED)
 
 struct conn_st {
     void           	*data;
