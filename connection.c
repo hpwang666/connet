@@ -85,6 +85,11 @@ int connect_peer(char *ip,int port,conn_t *c)
 		add_event((*c)->read, READ_EVENT);
 		return AIO_OK;
     }
+	
+	printf("connect errno:%d \n",errno);
+	//如果 erron ！= EINPROGRESS  则是错误 ，就不应该返回AIO_AGAIN
+	//if(rc == -1 && errno !=  EINPROGRESS)
+	
 	if(rc == -1 && (CONN_WOULDBLOCK || CONN_INPROGRESS))//非阻塞都会执行到这一步
     {
        // debug("CONN:need check\r\n");
@@ -366,7 +371,7 @@ void keepalive(int sock)
 	setsockopt(sock, IPPROTO_TCP, TCP_NODELAY,(const void *) &tcp_nodelay, sizeof(int));
 }
 
-void set_conn_info(conn_t c)
+int set_conn_info(conn_t c)
 {
     struct sockaddr_in sa = {0};//sockaddr_in
     socklen_t namelen = sizeof(sa);
@@ -392,6 +397,9 @@ void set_conn_info(conn_t c)
 	tmp = inet_ntoa((&sa)->sin_addr);
 	strncpy(peer_ip,tmp,200);
 	
+	if(strncmp(peer_ip,"0.0.0.0",7) == 0) return -1;
 	strncpy(c->peer_ip, peer_ip, sizeof(c->peer_ip) - 1);
 	c->peer_port = ntohs((&sa)->sin_port);
+	
+	return 0;
 }

@@ -6,7 +6,7 @@
 #define nonblocking(s)  fcntl(s, F_SETFL, fcntl(s, F_GETFL) | O_NONBLOCK)
 #define CONN_WOULDBLOCK (errno == EWOULDBLOCK || errno == EINTR || errno == EAGAIN)
 #define CONN_INPROGRESS (errno == EINPROGRESS)
-#define CONN_ConnRefused (errno == ECONNREFUSED)
+#define CONN_REFUSED (errno == ECONNREFUSED)
 
 struct conn_st {
     void           	*data;
@@ -61,7 +61,7 @@ int event_accept(event_t ev);
 int connect_peer(char *ip,int port,conn_t *c);
 int test_connect(conn_t c);
 void keepalive(int sock);
-void set_conn_info(conn_t c);
+int set_conn_info(conn_t c);
 
 #ifdef __cplusplus
 }
