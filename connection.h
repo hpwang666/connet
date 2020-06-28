@@ -61,7 +61,7 @@ int event_accept(event_t ev);
 int connect_peer(char *ip,int port,conn_t *c);
 int test_connect(conn_t c);
 void keepalive(int sock);
-void set_conn_info(conn_t c);
+int set_conn_info(conn_t c);
 
 #ifdef __cplusplus
 }

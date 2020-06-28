@@ -80,20 +80,25 @@ int connect_peer(char *ip,int port,conn_t *c)
 	
     if(rc == 0)
     {
-        //debug("CONN:already ok?");
+        debug("CONN:already ok?");
 		*c= get_conn(fd);
 		add_event((*c)->read, READ_EVENT);
 		return AIO_OK;
     }
+	
+	printf(">>>conn errno %d \n",errno);
 	if(rc == -1 && (CONN_WOULDBLOCK || CONN_INPROGRESS))//非阻塞都会执行到这一步
     {
-       // debug("CONN:need check\r\n");
+        debug("CONN:need check\r\n");
 		*c= get_conn(fd);
 		memcpy((*c)->peer_ip,ip,strlen(ip));
+		
 		(*c)->peer_port = port;
 		add_event((*c)->write, WRITE_EVENT);
 		return AIO_AGAIN;
     }
+	
+	debug("CONN is something:%d\r\n",rc);
 	close(fd);
 	return AIO_ERR;
 }
@@ -102,15 +107,18 @@ int connect_peer(char *ip,int port,conn_t *c)
 int test_connect(conn_t c)
 {
     int        err = 0;
+	int ret =0;
     socklen_t  len=sizeof(int);
 	/*
 	 * BSDs and Linux return 0 and set a pending error in err
 	 * Solaris returns -1 and sets errno
 	 */
-	getsockopt(c->fd, SOL_SOCKET, SO_ERROR, (void *) &err, &len);
+	ret = getsockopt(c->fd, SOL_SOCKET, SO_ERROR, (void *) &err, &len);
 	if (err) {
 		return AIO_ERR;
 	}
+	
+	if(ret == -1 ) return AIO_ERR;
     return AIO_OK;
 }
 
@@ -366,7 +374,7 @@ void keepalive(int sock)
 	setsockopt(sock, IPPROTO_TCP, TCP_NODELAY,(const void *) &tcp_nodelay, sizeof(int));
 }
 
-void set_conn_info(conn_t c)
+int set_conn_info(conn_t c)
 {
     struct sockaddr_in sa = {0};//sockaddr_in
     socklen_t namelen = sizeof(sa);
@@ -391,7 +399,9 @@ void set_conn_info(conn_t c)
 	getpeername(c->fd, (struct sockaddr *)&sa, &namelen);
 	tmp = inet_ntoa((&sa)->sin_addr);
 	strncpy(peer_ip,tmp,200);
+	if( 0 == strncmp(peer_ip,"0.0.0.0",7)) return -1;
 	
 	strncpy(c->peer_ip, peer_ip, sizeof(c->peer_ip) - 1);
 	c->peer_port = ntohs((&sa)->sin_port);
+	return 0;
 }
