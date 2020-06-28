@@ -86,14 +86,10 @@ int connect_peer(char *ip,int port,conn_t *c)
 		return AIO_OK;
     }
 	
-<<<<<<< HEAD
-	printf(">>>conn errno %d \n",errno);
-=======
-	printf("connect errno:%d \n",errno);
+
 	//如果 erron ！= EINPROGRESS  则是错误 ，就不应该返回AIO_AGAIN
 	//if(rc == -1 && errno !=  EINPROGRESS)
-	
->>>>>>> 407789846c265814af6b749c18d144a42e514be3
+
 	if(rc == -1 && (CONN_WOULDBLOCK || CONN_INPROGRESS))//非阻塞都会执行到这一步
     {
         debug("CONN:need check\r\n");
@@ -411,9 +407,5 @@ int set_conn_info(conn_t c)
 	if(strncmp(peer_ip,"0.0.0.0",7) == 0) return -1;
 	strncpy(c->peer_ip, peer_ip, sizeof(c->peer_ip) - 1);
 	c->peer_port = ntohs((&sa)->sin_port);
-<<<<<<< HEAD
-=======
-	
->>>>>>> 407789846c265814af6b749c18d144a42e514be3
 	return 0;
 }
