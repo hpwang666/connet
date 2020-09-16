@@ -14,7 +14,7 @@ INSTALL_DIR=/home/work/tftpboot
 ##### End of variables to change
 .PHONY :prepare all clean install
 
-TARGET = conn.a
+TARGET = connet.a
 ALL = $(TARGET)
 all: prepare $(ALL)
 

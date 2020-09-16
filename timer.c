@@ -36,6 +36,11 @@ int free_timer()
 	return 0;
 }
 
+msec64 get_current_ms()
+{
+	return current_msec;
+}
+
 void expire_timers(void)
 {
     event_t        ev;

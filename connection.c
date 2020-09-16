@@ -353,7 +353,7 @@ int event_accept(event_t ev)
 	c = get_conn(newfd);
 	set_conn_info(c);
 	c->write->ready = 1;//默认其可写，不再判断
-	lc->ls_handler(c);
+	lc->ls_handler(c,lc->ls_arg);
 	return 0;
 }
 

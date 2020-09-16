@@ -40,7 +40,7 @@ typedef struct event_st *event_t;
 
 typedef int (*io_handler)(conn_t c, u_char *buf, size_t size);
 typedef int (*event_handler)(event_t ev);
-typedef int (*listen_handler)(conn_t c);
+typedef int (*listen_handler)(conn_t c,void *arg);
 
 
 

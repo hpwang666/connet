@@ -19,6 +19,7 @@ void expire_timers(void);
 int del_timer(event_t ev);
 int add_timer(event_t ev, msec64 timer);
 msec64 find_timer(void);
+msec64 get_current_ms();
 
 #ifdef __cplusplus
 }

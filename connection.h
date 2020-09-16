@@ -25,6 +25,7 @@ struct conn_st {
 	int 		peer_port;
 	
 	listen_handler    ls_handler;// handler of accepted connection 
+	void    			*ls_arg;//arg of ls_handler
     io_handler         recv;
     io_handler         send;
    
