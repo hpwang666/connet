@@ -2,7 +2,7 @@
 #include "timer.h"
 #include "event.h"
 
-msec64   current_msec;
+static msec64   current_msec;
 void time_update(void)
 {
     time_t           sec;

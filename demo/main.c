@@ -72,20 +72,25 @@ int main()
 	int ret;
 	conn_t lc ,pc;
 	pooList_t list ;
+	msec64 t,delta=0;
 	
 	signal(SIGTERM, on_sig_term);
 	signal(SIGQUIT, on_sig_term);
 	signal(SIGINT, on_sig_term);
 	
+	
+	init_conn_queue();
+	init_timer();
+	init_epoll();
+	list = create_pool_list();
 
-	list= init_connet();
 	
 	lc = create_listening(11000);
 	lc->ls_handler = init_accepted_conn;
 	lc->ls_arg = NULL;//这里利用lc将参数最终传递给所有的c->data
 	
 
-	ret = connect_peer("172.16.10.4",12000,&pc);
+	ret = connect_peer("172.16.10.60",554,&pc);
 	pc->data = NULL;//传入参数
 	if(ret == AIO_AGAIN){
 		pc->read->handler = rtsp_connect_handler;
@@ -98,10 +103,18 @@ int main()
 	
 	while(!got_sig_term)
 	{
-		 connet_cycle();
+		t = find_timer();
+		process_events(t,1);
+		if(get_current_ms() -delta) {
+			expire_timers();
+			delta = get_current_ms();
+		}
 	}
 	
-	free_connet(list);
+	free_all_conn();
+	free_pool_list(list);
+	free_timer();
+	free_epoll();
 	
 	return 0;
 }

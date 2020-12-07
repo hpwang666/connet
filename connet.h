@@ -7,9 +7,4 @@
 #include "event.h"
 
 
-void connet_cycle();
-void free_connet(pooList_t list);
-pooList_t init_connet();
-
-
 #endif
