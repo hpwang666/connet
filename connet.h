@@ -3,6 +3,7 @@
 
 #include "core.h"
 #include "connection.h"
+#include "connection_udp.h"
 #include "timer.h"
 #include "event.h"
 

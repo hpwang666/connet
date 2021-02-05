@@ -24,25 +24,30 @@ int server_read_handle(event_t ev)
 	conn_t c = (conn_t)ev->data;
 	//threadPool_t tp = (threadPool_t)c->data;//lc->ls_arg
 	buf_t buf=c->readBuf;
-	buf_extend(buf, 4096);
-	r = c->recv(c,buf->tail,4096);
-	if(r<=0){
-		if(r==0){
-			close_conn(c);
-			printf("peer conn closed:%s:%d\n",c->peer_ip,c->peer_port);
+	do{
+		buf_extend(buf, 4096);
+		r = c->recv(c,buf->tail,4096);
+		if(r<=0){
+			if(r==0){
+				close_conn(c);
+				printf("peer conn closed:%s:%d\n",c->peer_ip,c->peer_port);
+			}
+			else handle_read_event(ev);
 		}
-		else handle_read_event(ev);
-	}
-	else{
-		buf->size += r;
-		buf->tail += r;
-		
-		printf("recv>>%s\n",buf->head);
-		buf_consume(buf, r);
-		if(ev->ready){
-			handle_read_event(ev);
+		else{
+			buf->size += r;
+			buf->tail += r;
+			
+			printf("recv>>%s\n",buf->head);
+			buf_consume(buf, r);
+			if(ev->ready){
+				printf("ready\n");
+				//handle_read_event(ev);//此句注销后，必须用while循环将缓冲区的数据读完，这样好处就是  减少了event触发次数。
+			}
 		}
-	}
+	}while(ev->ready);
+	
+	//handle_read_event(ev);//此句只有在缓存数据没读完才会触发，以上的循环已经把数据读完了
 	return 0;
 }
 
@@ -85,12 +90,12 @@ int main()
 	list = create_pool_list();
 
 	
-	lc = create_listening(11000);
+	lc = create_listening(10000);
 	lc->ls_handler = init_accepted_conn;
 	lc->ls_arg = NULL;//这里利用lc将参数最终传递给所有的c->data
 	
 
-	ret = connect_peer("172.16.10.60",554,&pc);
+	ret = connect_peer("172.16.10.44",554,&pc);
 	pc->data = NULL;//传入参数
 	if(ret == AIO_AGAIN){
 		pc->read->handler = rtsp_connect_handler;

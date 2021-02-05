@@ -9,25 +9,27 @@ CCFLAGS:=$(CFLAGS)
 LIBPATH := 
 LIBS :=   ../connet.a\
 			-Wl,-rpath=.
-#×¢ÒâlibµÄË³Ğò£¬×îµ×²ãµÄ·ÅÔÚ×îºóÃæ£¬ÒÔ±ãÓÚ±»Ç°ÃæµÄ¿âÒıÓÃ
+#æ³¨æ„libçš„é¡ºåºï¼Œæœ€åº•å±‚çš„æ”¾åœ¨æœ€åé¢ï¼Œä»¥ä¾¿äºè¢«å‰é¢çš„åº“å¼•ç”¨
+
+##### End of variables to change
+SOURCES =  $(wildcard *.c) 
+OBJFILES = $(SOURCES:%.c=obj/test_%.o)
+
+.PHONY :clean  prepare all
+TARGET = $(SOURCES:%.c=%_demo_bin)
+all : prepare $(TARGET) 
 
 
-SOURCES = $(wildcard *.c)
-OBJS=${SOURCES:%.c=obj/%.o}
-
-.PHONY :prepare all clean
-
-all: prepare connet_demo_bin
 
 prepare:
 	@if ! [ -d obj ]; then mkdir obj; fi;
 	
-obj/%.o : %.c
+obj/test_%.o:%.c
 	$(COMPILE_CC) 
 
-connet_demo_bin:$(OBJS)
+%_demo_bin:obj/test_%.o
 	$(LINK_CC)    
 
 clean:
-	rm -rf obj  *~ obj/db.o connet_demo_bin
+	rm -rf obj  *~ obj/db.o $(TARGET)
 
