@@ -90,7 +90,7 @@ int main()
 	list = create_pool_list();
 
 	
-	lc = create_listening(10000);
+	lc = create_listening(8000);
 	lc->ls_handler = init_accepted_conn;
 	lc->ls_arg = NULL;//这里利用lc将参数最终传递给所有的c->data
 	

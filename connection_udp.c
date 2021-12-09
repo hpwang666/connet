@@ -46,47 +46,17 @@ conn_t create_listening_udp(int port)
 int connect_peer_udp(char *ip,int port,conn_t *c)
 {
 	int fd;
-	struct sockaddr_in sa;
-	int rc;
 	
 	if( port <= 0 || ip == NULL) return -1;
-	
-	sa.sin_family = AF_INET;
-    sa.sin_addr.s_addr = inet_addr(ip);	//inet_addr()完成地址格式转换
-    sa.sin_port = htons(port);			//端口
-	
     if((fd = socket(AF_INET,SOCK_DGRAM,0)) < 0) return -1;
 
 	nonblocking(fd);
 	
-    rc = connect(fd,(struct sockaddr*)&sa, sizeof(struct sockaddr_in));
-	
-    if(rc == 0)
-    {
-        debug("CONN:already ok?");
-		*c= get_conn(fd);
-		add_event((*c)->read, READ_EVENT);
-		return AIO_OK;
-    }
-	
-
-	//如果 erron ！= EINPROGRESS  则是错误 ，就不应该返回AIO_AGAIN
-	//if(rc == -1 && errno !=  EINPROGRESS)
-
-	if(rc == -1 && (CONN_WOULDBLOCK || CONN_INPROGRESS))//非阻塞都会执行到这一步
-    {
-        debug("CONN:need check\r\n");
-		*c= get_conn(fd);
-		memcpy((*c)->peer_ip,ip,strlen(ip));
-		
-		(*c)->peer_port = port;
-		add_event((*c)->write, WRITE_EVENT);
-		return AIO_AGAIN;
-    }
-	
-	debug("CONN is something:%d\r\n",rc);
-	close(fd);
-	return AIO_ERR;
+	*c= get_conn_udp(fd);
+	memcpy((*c)->peer_ip,ip,strlen(ip));
+	(*c)->peer_port = port;
+	add_event((*c)->read, READ_EVENT);
+	return AIO_OK;
 }
 
 
@@ -135,12 +105,18 @@ static int _recv_udp(conn_t c, u_char *buf, size_t size)
 static int _send_udp(conn_t c, u_char *buf, size_t size)
 {
     int  n;
-    int      err;
     event_t  wev;
-
+	
+	struct sockaddr_in server;
+	int addrlen;
+	server.sin_family=AF_INET;
+	server.sin_port=htons(c->peer_port);          
+	server.sin_addr.s_addr=inet_addr(c->peer_ip); 
+	
+	addrlen = sizeof(server);
     wev = c->write;
-	n = send(c->fd, buf, size, 0);
-
+	n = sendto(c->fd, buf, size, 0,(struct sockaddr*)&server,addrlen);
+	
 	if (n > 0) {
 		if ((size_t)n <  size) {
 			wev->ready = 0;
@@ -149,16 +125,12 @@ static int _send_udp(conn_t c, u_char *buf, size_t size)
 		return n;
 	}
 
-	err = errno;
+	//err = errno;
 	if (n == 0) {
 		wev->ready = 0;
 		return n;
 	}
 
-	if (err == EAGAIN || err == EINTR) {
-		wev->ready = 0;
-		return -1;
-	}
     return -1;
 }
 

@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <signal.h>
 
-
+ 
 #include "connet.h"
 
 int init_udp_conn(conn_t c,void *arg);
@@ -22,7 +22,7 @@ int server_read_handle(event_t ev)
 	int r;
 	
 	conn_t c = (conn_t)ev->data;
-	//threadPool_t tp = (threadPool_t)c->data;//lc->ls_arg
+	conn_t pc = (conn_t)c->data;//lc->ls_arg
 	buf_t buf=c->readBuf;
 	
 	do{
@@ -38,10 +38,38 @@ int server_read_handle(event_t ev)
 			
 			printf("%s:%d recv>>%s\n",c->peer_ip,c->peer_port,buf->head);
 			buf_consume(buf, r);
+			pc->send(pc,(u_char *)"ok ok ok~~",10);
 		}
 	}while(ev->ready);
 	return 0;
 }
+
+int server_read_handle2(event_t ev)
+{
+	int r;
+	
+	conn_t c = (conn_t)ev->data;
+	conn_t pc = (conn_t)c->data;//lc->ls_arg
+	buf_t buf=c->readBuf;
+	
+	do{
+		buf_extend(buf, 4096);
+		r = c->recv(c,buf->tail,4096);
+		if(r<=0){
+			printf("没有数据:%s:%d\n",c->peer_ip,c->peer_port);
+			break;
+		}
+		else{
+			buf->size += r;
+			buf->tail += r;
+			
+			printf("%s:%d r>>>%s\n",c->peer_ip,c->peer_port,buf->head);
+			buf_consume(buf, r);
+		}
+	}while(ev->ready);
+	return 0;
+}
+
 
 int server_write_handle(event_t ev)
 {
@@ -63,7 +91,7 @@ int init_udp_conn(conn_t c,void *arg)
 int main()
 {
 	
-	conn_t lc;
+	conn_t lc,pc,pc1;
 	pooList_t list ;
 	msec64 t,delta=0;
 	
@@ -76,19 +104,13 @@ int main()
 	init_epoll();
 	list = create_pool_list();
 
+	connect_peer_udp("172.16.10.210",60000,&pc);
+	pc->read->handler =  server_read_handle2;
+	pc->write->handler = server_write_handle;
+	pc->data = NULL;
+	
 	lc = create_listening_udp(11000);
-	init_udp_conn(lc,NULL);
-	
-
-	//ret = connect_peer("172.16.10.60",554,&pc);
-	// pc->data = NULL;//传入参数
-	// if(ret == AIO_AGAIN){
-		// pc->read->handler = rtsp_connect_handler;
-		// pc->write->handler = rtsp_connect_handler;//write超时函数
-		// add_timer(pc->write, 1000);//加入定时器去判断
-	// }
-	// if(ret == AIO_OK);
-	
+	init_udp_conn(lc,pc);
 	
 	
 	while(!got_sig_term)
