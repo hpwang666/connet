@@ -61,8 +61,9 @@ int connect_peer_udp(char *ip,int port,conn_t *c)
 
 
 /*
-相异于TCP通讯，UDP通讯没有粘包的问题，所以每个数据包都是一个独立的节点，所以有可能数据读完了
-还有一个数据，所以需要连续的读取判断。
+相异于TCP通讯，UDP通讯没有粘包的问题，所以每个数据包都是一个独立的节点，每次recv只能读取一个包，所以有可能数据读完了
+还有一个数据，所以需要连续的读取判断。当收到大量UDP包时，就会触发rev->ready (FIONREAD),可以重复去触发read_event,
+或者用while循环去读取
 */
 
 static int _recv_udp(conn_t c, u_char *buf, size_t size)
