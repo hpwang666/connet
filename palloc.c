@@ -16,7 +16,7 @@
 static void *palloc_block(pool_t pool, size_t size);
 
 
-//从list中获取一个pool
+
 pooList_t create_pool_list()
 {
 	pooList_t  list;
@@ -30,7 +30,7 @@ pooList_t create_pool_list()
     return list;
 	
 }
-
+//从list中获取一个pool,一般默认的大小为4096，实际size要减去pool_st的大小
 pool_t get_pool(pooList_t list,size_t size)
 {
     pool_t  p;
@@ -123,7 +123,7 @@ void *palloc(pool_t pool, size_t size)
 		debug("try get new pool\n");
 		return palloc_block(pool, size);
     }
-	else printf("too large alloc size :%d\n",size);
+	else printf("too large alloc size :%ld\n",size);
 	return NULL;
 }
 
@@ -135,7 +135,7 @@ static void *palloc_block(pool_t pool, size_t size)
     pool_t 		p,newPool;
 	pooList_t 	l=pool->list;
 	
-    psize = (size_t) (pool->end - (u_char *) pool);
+    psize = (size_t) (pool->end - (u_char *) pool);//这个就是pool的整个大小
 
 	if(l->cache){
 		debug("palloc_block in  cache\n");

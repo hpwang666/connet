@@ -31,7 +31,7 @@ typedef struct pooList_st 		*pooList_t;
 struct pool_st {
     u_char          *last;
     u_char          *end;
-    size_t            	failed;
+    size_t            	failed;//
     size_t            	max;
 	pool_t     		next;
     pool_t         	current;
