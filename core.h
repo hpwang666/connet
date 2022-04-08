@@ -26,8 +26,6 @@
 
 #include "rbtree.h"
 #include "buf.h"
-#include "palloc.h"
-#include "sstr.h"
 
 #define AIO_OK   	(0)
 #define AIO_AGAIN   (-1)

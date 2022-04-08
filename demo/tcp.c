@@ -6,7 +6,6 @@
 
 
 #include "connet.h"
-
 static int rtsp_connect_handler(event_t ev);
 static int rtsp_reconnect_peer(event_t ev);
 static int got_sig_term = 0;
@@ -76,7 +75,6 @@ int main()
 {
 	int ret;
 	conn_t lc ,pc;
-	pooList_t list ;
 	msec64 t,delta=0;
 	
 	signal(SIGTERM, on_sig_term);
@@ -87,7 +85,6 @@ int main()
 	init_conn_queue();
 	init_timer();
 	init_epoll();
-	list = create_pool_list();
 
 	
 	lc = create_listening(8000);
@@ -117,7 +114,6 @@ int main()
 	}
 	
 	free_all_conn();
-	free_pool_list(list);
 	free_timer();
 	free_epoll();
 	

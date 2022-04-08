@@ -39,7 +39,7 @@ int buf_extend(buf_t b, size_t grow){
 	}
 	newsize =  b->size + grow;
 	if(newsize > b->capacity){
-		printf(">>>realloc %d %d\r\n",grow,b->size);//正常情况下可以实现缓存循环利用
+		printf(">>>realloc %ld %ld\r\n",grow,b->size);//正常情况下可以实现缓存循环利用
 #if 0		
 		char* tmp = realloc(b->heap, newsize);
 		b->heap = tmp;

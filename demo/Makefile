@@ -7,7 +7,7 @@ CFLAGS +=  -I./    -I../
 CXXFLAGS:=$(CFLAGS)
 CCFLAGS:=$(CFLAGS)
 LIBPATH := 
-LIBS :=   ../connet.a\
+LIBS :=   ../connet.a -lm\
 			-Wl,-rpath=.
 #注意lib的顺序，最底层的放在最后面，以便于被前面的库引用
 

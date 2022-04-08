@@ -47,7 +47,7 @@ conn_t create_listening(int port)
 		exit(-1);
     }
  
-    if((ret=listen(fd,64))<0)
+    if((ret=listen(fd,128))<0)
     {
         perror("listen failed");
         exit(-1);

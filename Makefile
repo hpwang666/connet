@@ -2,7 +2,7 @@ include ../Makefile.pub
 
 DEFS =
 CFLAGS := -Wall $(DEFS) -I. -O0 -g
-CFLAGS +=  -I./   -I../
+CFLAGS +=  -I./   -I./util/
 CXXFLAGS:=$(CFLAGS)
 CCFLAGS:=$(CFLAGS)
 LIBPATH := 
@@ -18,7 +18,7 @@ TARGET = connet.a
 ALL = $(TARGET)
 all: prepare $(ALL)
 
-SOURCES =  $(wildcard *.c) 
+SOURCES =  $(wildcard *.c util/*.c) 
 
 #change .cpp files  to .o files
 OBJFILES = $(SOURCES:%.c=obj/%.o)
@@ -31,6 +31,7 @@ $(TARGET):	$(OBJFILES)
 prepare:
 	@echo "preparing..."
 	@if ! [ -d obj ]; then mkdir obj; fi;
+	@if ! [ -d obj/util ]; then mkdir obj/util; fi;
 clean:
 	-rm -rf *.o $(ALL) *~ obj/* obj
 install:

@@ -3,7 +3,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include "cjson.h"
+#include "../util/cjson.h"
 
 //因为使用了palloc 所以不需要进行free，最后统一释放
 const char *yzb="{\"data\":{\"wordsInfo\":[\"云智泊无人值守停车场\",\"本地时间\",\"减速慢行\",\"一车一杆\",\"关\"],\"restart_time\":0,\"isCheckOpen\":0,\"issense\":1,\"is_special_park\":2,\"type\":2,\"set_broadcast_btime\":\"05:02:02-20:05:05\",\"set_broadcast_bvolume\":5,\"set_broadcast_wtim\":\"undefined-undefined\",\"set_broadcast_wvolume\":4,\"qrcodeUrl\":\"http://bate.cloud-ipark.com:8087/#/bingchannel?id=yzb00023\",\"freeAccessForOffline\":true,\"isCashopen\":2,\"isQrcode\":1,\"licType\":0,\"controlCardType\":2,\"screenType\":0,\"screenRow\":1,\"delayedOffTime\":2,\"monitorIp\":\"1.1.1.1\",\"lightConfig\":[{\"start\":\"00:00\",\"end\":\"07:30\",\"index\":\"1\",\"light\":\"10\"},{\"start\":\"07:30\",\"end\":\"20:00\",\"index\":\"2\",\"light\":\"100\"},{\"start\":\"20:00\",\"end\":\"24:00\",\"index\":\"3\",\"light\":\"100\"}],\"breakPsw\":\"0001\"},\"totalPage\":0,\"total\":1,\"success\":true,\"rtnCode\":200,\"rtnMsg\":\"\",\"url\":\"devInit\"}";
