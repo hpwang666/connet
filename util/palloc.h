@@ -26,7 +26,7 @@
     (u_char *) (((uintptr_t) (p) + ((uintptr_t) a - 1)) & ~((uintptr_t) a - 1))
 	
 typedef struct pool_st  		*pool_t;
-typedef struct pooList_st 		*pooList_t;
+typedef struct pooList_st 		*poolList_t;
 
 struct pool_st {
     u_char          *last;
@@ -35,7 +35,7 @@ struct pool_st {
     size_t            	max;
 	pool_t     		next;
     pool_t         	current;
-	pooList_t    	list;
+	poolList_t    	list;
 };
 
 struct pooList_st{
@@ -48,9 +48,9 @@ extern "C"
 {
 #endif
 
-pooList_t create_pool_list();
-void free_pool_list(pooList_t list);
-pool_t get_pool(pooList_t list,size_t size);
+poolList_t create_pool_list();
+void free_pool_list(poolList_t list);
+pool_t get_pool(poolList_t list,size_t size);
 void destroy_pool(pool_t pool);
 void reset_pool(pool_t pool);
 

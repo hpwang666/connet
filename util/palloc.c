@@ -17,11 +17,11 @@ static void *palloc_block(pool_t pool, size_t size);
 
 
 
-pooList_t create_pool_list()
+poolList_t create_pool_list()
 {
-	pooList_t  list;
+	poolList_t  list;
 
-    list = (pooList_t)calloc(1, sizeof(struct pooList_st));
+    list = (poolList_t)calloc(1, sizeof(struct pooList_st));
     if (list == NULL) {
         return NULL;
     }
@@ -31,7 +31,7 @@ pooList_t create_pool_list()
 	
 }
 //从list中获取一个pool,一般默认的大小为4096，实际size要减去pool_st的大小
-pool_t get_pool(pooList_t list,size_t size)
+pool_t get_pool(poolList_t list,size_t size)
 {
     pool_t  p;
 	if(NULL == list) return NULL;
@@ -66,7 +66,7 @@ pool_t get_pool(pooList_t list,size_t size)
 void destroy_pool(pool_t pool)
 {
     pool_t     n,p =pool;
-	pooList_t l=pool->list;
+	poolList_t l=pool->list;
 	while (p) {
 		debug("destroy one pool\n");
 		n = p->next;
@@ -76,7 +76,7 @@ void destroy_pool(pool_t pool)
     }
 }
 
-void free_pool_list(pooList_t list)
+void free_pool_list(poolList_t list)
 {
 	pool_t     n,p =list->cache;
 	while (p) {
@@ -133,7 +133,7 @@ static void *palloc_block(pool_t pool, size_t size)
     u_char      *m;
     size_t      psize;
     pool_t 		p,newPool;
-	pooList_t 	l=pool->list;
+	poolList_t 	l=pool->list;
 	
     psize = (size_t) (pool->end - (u_char *) pool);//这个就是pool的整个大小
 
