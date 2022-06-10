@@ -36,12 +36,12 @@ pool_t get_pool(poolList_t list,size_t size)
     pool_t  p;
 	if(NULL == list) return NULL;
     if(list->cache){
-		debug("get pool in cache\n");
+		printf("get pool in cache\n");
 		p = list->cache;
 		list->cache = p->next;
 	}
 	else{
-		debug("get pool in calloc\n");
+		printf("get pool in calloc\n");
 		p =(pool_t) calloc(1,size);
 		if (p == NULL) {
 			return NULL;
@@ -69,7 +69,7 @@ void destroy_pool(pool_t pool)
     pool_t     n,p =pool;
 	poolList_t l=pool->list;
 	while (p) {
-		debug("destroy one pool\n");
+		printf("destroy one pool\n");
 		n = p->next;
         p->next = l->cache;
 		l->cache=p;
@@ -81,7 +81,7 @@ void free_pool_list(poolList_t list)
 {
 	pool_t     n,p =list->cache;
 	while (p) {
-		debug("free pool\n");
+		printf("free pool\n");
 		n = p->next;
 		free(p);
 		p=n;
@@ -112,18 +112,15 @@ void *palloc(pool_t pool, size_t size)
 		do {
 			m = p->last;
 			m = align_ptr(m, ALIGNMENT);
-			if(m>=p->end){
-				p->failed++;
-				break;
+			if(m<p->end){
+				if ((size_t) (p->end - m) >= size) {
+					p->last = m + size;
+					return m;
+				}
 			}
-			if ((size_t) (p->end - m) >= size) {
-				p->last = m + size;
-				pool->current = p;
-				return m;
-			}
-			p->failed++;
+			//p->failed++;
 			p = p->next;
-			debug("try next pool\n");
+			debug("try next pool[%d]\n",size);
 		} while (p);
 		debug("try get new pool\n");
 		return palloc_block(pool, size);
@@ -141,7 +138,6 @@ static void *palloc_block(pool_t pool, size_t size)
 	poolList_t 	l=pool->list;
 	
     psize = (size_t) (pool->end - (u_char *) pool+1);
-	debug("psize [%d]\r\n",psize);
 	if(l->cache){
 		debug("palloc_block in  cache\n");
 		newPool = l->cache;
