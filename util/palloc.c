@@ -21,7 +21,7 @@ poolList_t create_pool_list()
 {
 	poolList_t  list;
 
-    list = (poolList_t)calloc(1, sizeof(struct pooList_st));
+    list = (poolList_t)calloc(1, sizeof(struct poolList_st));
     if (list == NULL) {
         return NULL;
     }

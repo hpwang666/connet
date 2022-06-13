@@ -26,7 +26,7 @@
     (u_char *) (((uintptr_t) (p) + ((uintptr_t) a - 1)) & ~((uintptr_t) a - 1))
 	
 typedef struct pool_st  		*pool_t;
-typedef struct pooList_st 		*poolList_t;
+typedef struct poolList_st 		*poolList_t;
 
 struct pool_st {
     u_char          *last;
@@ -38,7 +38,7 @@ struct pool_st {
 	poolList_t    	list;
 };
 
-struct pooList_st{
+struct poolList_st{
     pool_t  	cache;
 	size_t 		cacheSize;
 } ;
