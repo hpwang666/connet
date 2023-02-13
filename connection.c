@@ -351,9 +351,13 @@ int event_accept(event_t ev)
 	nonblocking(newfd);
 	keepalive(newfd);
 	c = get_conn(newfd);
-	set_conn_info(c);
-	c->write->ready = 1;//默认其可写，不再判断
-	lc->ls_handler(c,lc->ls_arg);
+	if(-1 == set_conn_info(c)){
+		close_conn(c);
+	}
+	else{
+		c->write->ready = 1;//默认其可写，不再判断
+		lc->ls_handler(c,lc->ls_arg);
+	}
 	return 0;
 }
 
@@ -381,31 +385,33 @@ int set_conn_info(conn_t c)
 {
     struct sockaddr_in sa = {0};//sockaddr_in
     socklen_t namelen = sizeof(sa);
-    char peer_ip[200] = {'\0'};
-    char local_ip[200] = {'\0'};
+    char peer_ip[32] = {'\0'};
+    char local_ip[32] = {'\0'};
 	char *tmp;
 	
     getsockname(c->fd, (struct sockaddr*)&sa, &namelen);
 	tmp = inet_ntoa((&sa)->sin_addr);
-	strncpy(local_ip,tmp,200);
-   
+	snprintf(local_ip,sizeof(local_ip),"%s",tmp);
+
     if(0 == strcmp(local_ip, "unix:@")){
     	snprintf(local_ip, sizeof(local_ip), "anonymous-sock-%d", c->fd);
     }
-    strncpy(c->local_ip, local_ip, sizeof(c->local_ip) - 1);
+    snprintf(c->local_ip, sizeof(c->local_ip),"%s",local_ip);
     c->local_port =  ntohs((&sa)->sin_port);
 
     /* Server mode: get remote info by fd,
 	   Client mode: known when connecting */
     
+	namelen = sizeof(sa);
     memset(&sa, 0, namelen);
-	getpeername(c->fd, (struct sockaddr *)&sa, &namelen);
-	tmp = inet_ntoa((&sa)->sin_addr);
-	strncpy(peer_ip,tmp,200);
-	if( 0 == strncmp(peer_ip,"0.0.0.0",7)) return -1;
+	if(0==getpeername(c->fd, (struct sockaddr *)&sa, &namelen)){
+		tmp = inet_ntoa((&sa)->sin_addr);
+		snprintf(peer_ip,sizeof(peer_ip),"%s",tmp);
+	}
+	else return -1;
 	
 	if(strncmp(peer_ip,"0.0.0.0",7) == 0) return -1;
-	strncpy(c->peer_ip, peer_ip, sizeof(c->peer_ip) - 1);
+	snprintf(c->peer_ip, sizeof(c->peer_ip),"%s",peer_ip);
 	c->peer_port = ntohs((&sa)->sin_port);
 	return 0;
 }

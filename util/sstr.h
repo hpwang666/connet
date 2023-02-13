@@ -24,8 +24,8 @@ typedef struct str_st			*str_t;
 
 struct str_st{
 	u_char 	*data;
-	size_t  	size;
-	size_t 		len;
+	size_t  	size; //容器大小
+	size_t 		len;  //数据长度
 };
 
 //snprintf  使用时要注意  n 必须大于实际字符串，否则末尾会被\0替代
@@ -41,13 +41,14 @@ struct str_st{
 														
 
 #define str_t_dup(a,b,c)   b =(str_t) palloc(a,sizeof(struct str_st));\
-						b->size = b->len=strlen(c)	;						\
-						b->data=(u_char *) palloc(a,b->size+1);  \
+						b->len=strlen(c)	;   \
+						b->size = b->len +4;						\
+						b->data=(u_char *) palloc(a,b->size);  \
 						memcpy(b->data,c,b->size);
 						
 						
 #define str_t_ndup(a,b,c)   b =(str_t) palloc(a,sizeof(struct str_st));\
-						b->size = c	;						\
+						b->size = c	+4;						\
 						b->len = 0;							\
 						b->data=(u_char *) palloc(a,b->size)
 						
