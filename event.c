@@ -174,6 +174,8 @@ int process_events(int timer, int flags)
             wev->ready = 1;
             wev->handler(wev);
 			del_event(wev,0,CLOSE_EVENT);//WRITE  会重复触发，需要清除
+			//这句话是可以不用的，因为用的是边缘触发
+			//而且会导致write_handle里面添加的event会被清除，而导致无效发生
         }
     }
 
