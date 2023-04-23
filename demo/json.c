@@ -12,7 +12,7 @@ int main()
 {
 	
 	
-	pooList_t list = create_pool_list();
+	poolList_t list = create_pool_list();
 	pool_t pool = get_pool(list,4096);
 	json_initHooks(pool);
 	json_st *j = json_parse(yzb);
