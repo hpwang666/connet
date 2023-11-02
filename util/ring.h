@@ -32,12 +32,20 @@ struct ringNode_st {
 };
 
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+	ring_t     		ring_new(size_t size,size_t dataSize);
+	int       		ring_free(ring_t q);
+	int 			ring_push(ring_t q, void * ,size_t);
+	ringNode_t    	ring_get(ring_t q);    //get  得到数据，但没有改变head的位置，还是占据着
+	int    			ring_pull(ring_t q);   //pull 更新head的位置
+#ifdef __cplusplus
+}
+#endif
 
-ring_t     		ring_new(size_t size,size_t dataSize);
-int       		ring_free(ring_t q);
-int 			ring_push(ring_t q, void * ,size_t);
-ringNode_t    	ring_get(ring_t q);    //get  得到数据，但没有改变head的位置，还是占据着
-int    			ring_pull(ring_t q);   //pull 更新head的位置
+
 
 #endif
 

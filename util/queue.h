@@ -46,13 +46,19 @@ typedef struct queue_st {
 
 } *queue_t;
 
-
-queue_t queue_new(size_t queueSize,size_t nodeSize); 
-void queue_free(queue_t q); 
-int queue_push(queue_t q, size_t priority, size_t len,void *data);
-void queue_cache(queue_t q,queueNode_t node); 
-queueNode_t queue_get(queue_t q);
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+	queue_t queue_new(size_t queueSize,size_t nodeSize); 
+	void queue_free(queue_t q); 
+	int queue_push(queue_t q, size_t priority, size_t len,void *data);
+	void queue_cache(queue_t q,queueNode_t node); 
+	queueNode_t queue_get(queue_t q);
  
+#ifdef __cplusplus
+}
+#endif
 
 
 
