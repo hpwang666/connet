@@ -358,6 +358,7 @@ int event_accept(event_t ev)
 		c->write->ready = 1;//默认其可写，不再判断
 		lc->ls_handler(c,lc->ls_arg);
 	}
+	handle_read_event(ev);
 	return 0;
 }
 
