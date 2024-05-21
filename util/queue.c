@@ -21,6 +21,7 @@ queue_t queue_new(size_t queueSize,size_t nodeSize)
 	q->nodeSize =  nodeSize;
         
     n1 = (queueNode_t) calloc(1,sizeof(struct queueNode_st));    
+	n1->data = calloc(1,q->nodeSize);
 	n1->next=NULL;
 	while(queueSize-1){
 		n0 = (queueNode_t) calloc(1,sizeof(struct queueNode_st));
