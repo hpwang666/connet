@@ -12,7 +12,7 @@ void time_update(void)
     gettimeofday(&tv, NULL);
     sec = tv.tv_sec;
     msec = tv.tv_usec / 1000;
-	current_msec = sec * 1000 + msec;
+	current_msec = sec * 1000LL + msec;
 }
 
 
