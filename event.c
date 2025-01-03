@@ -32,7 +32,10 @@ int add_event(event_t ev, int event)
     if (event == READ_EVENT) {
         e = c->write;
         events = EPOLLIN|EPOLLRDHUP|EPOLLHUP;
-		prev = 0;
+		if(e->active)
+			prev=EPOLLOUT;
+		else
+			prev = 0;
     } else {
         e = c->read;
         events = EPOLLOUT;
@@ -173,7 +176,8 @@ int process_events(int timer, int flags)
 			
             wev->ready = 1;
             wev->handler(wev);
-			del_event(wev,0,CLOSE_EVENT);//WRITE  会重复触发，需要清除
+			//del_event(wev,WRITE_EVENT,0);//WRITE  会重复触发，水平触发必须要完全清除，否则会不停触发
+			del_event(wev,0,CLOSE_EVENT);//边缘触发可以只清除个标志
 			//这句话是可以不用的，因为用的是边缘触发
 			//而且会导致write_handle里面添加的event会被清除，而导致无效发生
         }
