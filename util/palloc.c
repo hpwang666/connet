@@ -36,12 +36,12 @@ pool_t get_pool(poolList_t list,size_t size)
     pool_t  p;
 	if(NULL == list) return NULL;
     if(list->cache){
-		printf("get pool in cache\n");
+		debug("get pool in cache\n");
 		p = list->cache;
 		list->cache = p->next;
 	}
 	else{
-		printf("get pool in calloc\n");
+		debug("get pool in calloc\n");
 		p =(pool_t) calloc(1,size);
 		if (p == NULL) {
 			return NULL;
@@ -69,7 +69,7 @@ void destroy_pool(pool_t pool)
     pool_t     n,p =pool;
 	poolList_t l=pool->list;
 	while (p) {
-		printf("destroy one pool\n");
+		debug("destroy one pool\n");
 		n = p->next;
         p->next = l->cache;
 		l->cache=p;
